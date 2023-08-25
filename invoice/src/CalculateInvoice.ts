@@ -1,5 +1,6 @@
 import TransactionDAO from "./interfaces/TransactionDAO";
 import CurrencyGateway from "./interfaces/CurrencyGateway";
+import Invoice from "./concrete/Invoice";
 
 export default class CalculateInvoice {
     constructor (
@@ -16,19 +17,10 @@ export default class CalculateInvoice {
         
         const transactions = await this.transactionDAO.getTransactions(cardNumber, currentMonth, currentYear);
         const currencies = await this.currencyGateway.getCurrencies();
+
+        const invoice = new Invoice(transactions, currencies);
         
-        let total = 0;
-        for (const transaction of transactions) {
-            switch (transaction.currency) {
-                case 'USD':
-                    total += parseFloat(transaction.amount) * currencies.usd;
-                    break;
-                    
-                    default:
-                    total += parseFloat(transaction.amount);
-                    break;
-            }
-        }
+        const total = invoice.getTotal();
 
         return total;
     }
