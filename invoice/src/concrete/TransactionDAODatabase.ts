@@ -1,11 +1,16 @@
-import pgp from 'pg-promise';
-
 import TransactionDAO from "../interfaces/TransactionDAO";
+import Connection from '../interfaces/Connection';
 
 export default class TransactionDAODatabase implements TransactionDAO {
+
+    constructor (
+        readonly connection: Connection
+    ) {
+
+    }
     
     async getTransactions(cardNumber: string, month: number, year: number): Promise<any> {
-        const connection = pgp()("postgres://postgres:123456@localhost:5432/diego");
+        
         const query = `select * 
                         from diego.card_transaction 
                         where card_number = $1
@@ -16,7 +21,7 @@ export default class TransactionDAODatabase implements TransactionDAO {
             month,
             year
         ];
-        const transactions = await connection.query(query, params);
+        const transactions = await this.connection.query(query, params);
         return transactions;
     }    
 
