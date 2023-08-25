@@ -22,6 +22,8 @@ export default class CalculateInvoice {
         
         const total = invoice.getTotal();
 
-        return total;
+        return {
+            total
+        };
     }
 }
